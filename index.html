@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101318">
+<meta name="description" content="Your personal home workout, weight and six-pack progress tracker.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<title>FIT68 | Home Fitness</title>
+<style>
+:root{--bg:#0c0f14;--panel:#171c24;--panel2:#202733;--text:#f4f6f8;--muted:#9ca8b7;--lime:#b8f34a;--red:#ff565e;--line:#2b3441}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;padding-bottom:82px}
+header{padding:22px 18px 14px;background:linear-gradient(140deg,#1b2530,#101318 65%);border-bottom:1px solid var(--line)}
+.brand{font-size:12px;letter-spacing:3px;color:var(--lime);font-weight:900}.hero{font-size:29px;font-weight:900;line-height:1.05;margin:9px 0}.sub{color:var(--muted);font-size:13px}
+main{max-width:760px;margin:auto;padding:15px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:8px 0 18px}.stat,.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}.stat small{display:block;color:var(--muted);font-size:11px}.stat strong{font-size:21px;display:block;margin-top:5px}.lime{color:var(--lime)}
+h2{font-size:18px;margin:20px 0 10px}h3{font-size:15px;margin:0 0 7px}.muted{color:var(--muted)}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.progress{height:8px;background:#303945;border-radius:20px;overflow:hidden;margin:10px 0}.progress span{display:block;height:100%;background:var(--lime);width:0}
+button,input,select{font:inherit}button{border:0;border-radius:12px;padding:11px 14px;background:var(--lime);color:#101318;font-weight:800;cursor:pointer}button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}button.danger{background:#49252a;color:#ffd9dc}.tabs{position:fixed;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(4,1fr);background:#11161d;border-top:1px solid var(--line);padding:8px 6px calc(8px + env(safe-area-inset-bottom));z-index:5}.tabs button{background:transparent;color:var(--muted);font-size:11px;padding:8px 2px}.tabs button.active{color:var(--lime)}.tabs span{display:block;font-size:19px;margin-bottom:3px}
+.daylist{display:flex;gap:7px;overflow:auto;padding:2px 0 12px}.day{white-space:nowrap;background:var(--panel2);color:var(--muted);border:1px solid var(--line);padding:9px 12px;border-radius:12px}.day.active{background:var(--lime);color:#101318}
+.exercise{display:flex;gap:12px;align-items:flex-start;margin:10px 0;padding:13px;background:var(--panel);border:1px solid var(--line);border-radius:14px}.num{width:30px;height:30px;flex:none;border-radius:9px;background:#2c3743;color:var(--lime);display:grid;place-items:center;font-weight:900}.exercise p{font-size:13px;line-height:1.45;color:var(--muted);margin:5px 0}.exercise .dose{font-size:12px;color:var(--lime);font-weight:800}.exercise input{width:20px;height:20px;accent-color:var(--lime)}
+input[type=number],input[type=date],select{width:100%;background:#0f141b;color:var(--text);border:1px solid var(--line);padding:12px;border-radius:11px;margin:6px 0 12px}
+label{font-size:12px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hidden{display:none!important}.timer{text-align:center;padding:22px}.time{font-size:54px;font-weight:900;font-variant-numeric:tabular-nums;margin:12px}.bigbtn{width:100%;margin-top:8px}.badge{font-size:11px;background:#293522;color:var(--lime);padding:5px 8px;border-radius:20px}
+ul.steps{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:13px;line-height:1.65}
+.log{border-bottom:1px solid var(--line);padding:10px 0;font-size:13px}.empty{padding:24px;text-align:center;color:var(--muted)}.note{font-size:12px;color:var(--muted);line-height:1.5}
+</style>
+</head>
+<body>
+<header><div class="brand">FIT68 / HOME PERFORMANCE</div><div class="hero">BUILD YOUR<br><span class="lime">STRONGER SELF.</span></div><div class="sub">Your home workout plan · No gym equipment needed</div></header>
+<main>
+<section id="home">
+ <div class="stats">
+  <div class="stat"><small>CURRENT</small><strong id="currentWeight">84 kg</strong></div>
+  <div class="stat"><small>TARGET</small><strong class="lime">68 kg</strong></div>
+  <div class="stat"><small>TO GO</small><strong id="remaining">16 kg</strong></div>
+ </div>
+ <div class="card"><div class="row"><h3>Weight-loss progress</h3><span class="badge" id="percent">0%</span></div><div class="progress"><span id="weightBar"></span></div><div class="row muted" style="font-size:12px"><span>84 kg start</span><span>68 kg goal</span></div></div>
+ <h2>Today's training</h2><div class="card"><div class="row"><div><div class="muted" id="todayLabel">Monday</div><h3 id="todayTitle">Full body + abs</h3></div><span class="badge">HOME PLAN</span></div><p class="muted" style="font-size:13px">Choose a day below to see exercises and mark each one complete.</p><button onclick="showTab('workouts')">Open workout</button></div>
+ <h2>Weekly schedule</h2><div class="grid2" id="weekOverview"></div>
+ <h2>Six-pack & stamina goals</h2><div class="card"><div class="row"><span>Ab workouts completed</span><strong id="abCount">0</strong></div><div class="row" style="margin-top:12px"><span>Workout days completed</span><strong id="workoutCount">0 / 6</strong></div><p class="note">Abs become visible through overall fat loss and abdominal muscle development. Spot-reducing belly fat isn't possible.</p></div>
+</section>
+<section id="workouts" class="hidden">
+ <h2>Weekly workout plan</h2><div class="daylist" id="dayButtons"></div><div class="row"><div><div class="muted" id="dayName">Monday</div><h2 id="workoutTitle" style="margin:3px 0">Full body + abs</h2></div><span class="badge" id="duration">40 MIN</span></div>
+ <div id="exerciseList"></div>
+ <div class="card"><div class="row"><div><h3>Workout completion</h3><div class="muted" id="doneText">0 exercises completed</div></div><strong class="lime" id="donePercent">0%</strong></div><div class="progress"><span id="doneBar"></span></div><button class="bigbtn" onclick="finishWorkout()">Finish today's workout</button></div>
+</section>
+<section id="timer" class="hidden">
+ <h2>Rest timer</h2><div class="card timer"><div class="muted">TIME REMAINING</div><div class="time" id="clock">01:00</div><div class="grid2"><button class="secondary" onclick="setTimer(30)">30 sec</button><button class="secondary" onclick="setTimer(60)">60 sec</button><button class="secondary" onclick="setTimer(90)">90 sec</button><button class="secondary" onclick="setTimer(120)">2 min</button></div><div class="grid2" style="margin-top:14px"><button onclick="startTimer()">Start</button><button class="secondary" onclick="pauseTimer()">Pause</button></div><button class="secondary bigbtn" onclick="resetTimer()">Reset</button></div><p class="note">Use controlled reps. Rest between sets when needed; don't rush or sacrifice form.</p>
+</section>
+<section id="progress" class="hidden">
+ <h2>Progress tracker</h2><div class="card"><h3>Log your weight</h3><label for="weightInput">Weight in kg</label><input id="weightInput" type="number" min="30" max="250" step="0.1" placeholder="e.g. 83.5"><label for="weightDate">Date</label><input id="weightDate" type="date"><button class="bigbtn" onclick="addWeight()">Save weight</button></div>
+ <div class="card" style="margin-top:12px"><h3>Stamina & body measurements</h3><label for="runInput">Longest continuous jog (minutes) — optional</label><input id="runInput" type="number" min="0" max="300" step="0.5" placeholder="e.g. 5"><label for="waistInput">Waist measurement (cm) — optional</label><input id="waistInput" type="number" min="30" max="200" step="0.1" placeholder="e.g. 98"><button class="secondary bigbtn" onclick="saveMetrics()">Save measurements</button><p class="note">You don't need to run for this plan. You can track stamina using your indoor cardio duration instead.</p></div>
+ <h2>Weight history</h2><div class="card" id="weightHistory"><div class="empty">No entries yet. Add your first weigh-in.</div></div>
+ <h2>Personal records</h2><div class="card" id="metricsHistory"></div>
+</section>
+</main>
+<nav class="tabs"><button class="active" data-tab="home" onclick="showTab('home')"><span>⌂</span>Home</button><button data-tab="workouts" onclick="showTab('workouts')"><span>▦</span>Workouts</button><button data-tab="timer" onclick="showTab('timer')"><span>◷</span>Timer</button><button data-tab="progress" onclick="showTab('progress')"><span>↗</span>Progress</button></nav>
+<script>
+const plans=[
+{name:"Monday",title:"Full body + abs",duration:"40 MIN",items:[
+["Bodyweight squats","3 × 15 reps","Stand feet shoulder-width apart. Push hips back, bend knees, then stand by pressing through your feet.","Legs and glutes"],
+["Push-ups","3 × 10–15 reps","Hands slightly wider than shoulders. Keep your body straight, lower chest under control, then push up. Use knee push-ups if needed.","Chest, shoulders, triceps"],
+["Reverse lunges","3 × 10 each leg","Step one foot backward, bend both knees comfortably, then push through the front foot to return. Hold a wall for balance if needed.","Legs and glutes"],
+["Lying leg raises","3 × 8–10 reps","Lie on your back. Raise legs only as far as you can keep your lower back controlled; bend knees if needed.","Core"],
+["Forearm plank","3 × 20–30 sec","Elbows under shoulders, body in a straight line. Tighten stomach and breathe normally.","Core stability"],
+["Bicycle crunches","2 × 12 each side","Move slowly; bring opposite elbow toward knee without pulling your neck.","Abs and obliques"]]},
+{name:"Tuesday",title:"Home cardio + stamina",duration:"25–30 MIN",items:[
+["Jumping jacks / step jacks","3 × 30 sec","Jump feet apart and bring arms overhead, then return. For low impact, step one foot out at a time.","Cardio"],
+["High knees / standing knee drives","3 × 30 sec","Run in place lifting knees comfortably. Low-impact option: march and drive one knee up at a time.","Cardio and hip flexors"],
+["Mountain climbers","3 × 20 total","Start in a high plank. Bring knees toward chest alternately. Slow the pace to keep hips steady.","Cardio and core"],
+["Butt kicks","3 × 30 sec","Jog gently in place bringing heels toward glutes. Replace with alternating heel curls if needed.","Cardio"],
+["March in place","3 × 1 min","March at a brisk, steady pace and swing arms naturally.","Low-impact endurance"]]},
+{name:"Wednesday",title:"Full body + abs",duration:"35–40 MIN",items:[
+["Glute bridges","3 × 15 reps","Lie on back with knees bent and feet flat. Lift hips, squeeze glutes, then lower slowly.","Glutes and hamstrings"],
+["Bodyweight squats","3 × 12 reps","Sit hips back and bend knees. Keep heels down and chest comfortable and upright.","Legs"],
+["Wall push-ups","3 × 12 reps","Hands on wall at chest height. Step back, bend elbows toward wall, then push away.","Chest and arms"],
+["Dead bugs","3 × 8 each side","Lie on back with arms up and knees bent. Slowly lower opposite arm and leg while keeping lower back gently supported.","Deep core"],
+["Forearm plank","3 × 20–30 sec","Keep a straight line from shoulders to heels; stop if your lower back sags.","Core"]]},
+{name:"Thursday",title:"Low-impact cardio + core",duration:"30 MIN",items:[
+["Step jacks","3 × 30 sec","Step one foot out while raising arms, then switch sides. Keep it smooth and rhythmic.","Low-impact cardio"],
+["Standing knee raises","3 × 20 total","Stand tall and lift alternating knees toward waist height. Brace your stomach.","Cardio and core"],
+["Standing knee-to-elbow crunches","2 × 12 each side","Bring same-side knee and elbow toward each other, then switch. Move slowly.","Obliques"],
+["Dead bugs","3 × 10 each side","Keep back controlled against the floor while extending opposite arm and leg.","Core stability"],
+["Forearm plank","2 × 20 sec","Hold a comfortable plank with steady breathing. Use knees-down version if needed.","Core"]]},
+{name:"Friday",title:"Full body + abs",duration:"40 MIN",items:[
+["Bodyweight squats","3 × 15 reps","Lower as if sitting into a chair, then stand. Keep knees tracking in line with toes.","Legs"],
+["Push-ups","3 × 10–15 reps","Keep body straight and elbows at a comfortable angle. Use an easier incline or knee variation if form breaks.","Chest and arms"],
+["Reverse lunges","2 × 10 each leg","Step back and lower only as far as comfortable. Keep front foot flat.","Legs and balance"],
+["Glute bridges","3 × 15 reps","Lift hips by squeezing glutes, not by over-arching your back.","Glutes"],
+["Bicycle crunches","2 × 12 each side","Alternate slowly with control; avoid pulling on your neck.","Abs"],
+["Plank","3 × 20–30 sec","Brace your core and breathe. End the set when form starts to slip.","Core"]]},
+{name:"Saturday",title:"Full body stamina circuit",duration:"30 MIN",items:[
+["Bodyweight squats","3 × 15 reps","Perform smooth controlled squats. Choose a comfortable depth.","Legs"],
+["Push-ups","3 × 8–10 reps","Keep a straight body line. Use knee push-ups if needed.","Upper body"],
+["Mountain climbers / standing knee drives","3 × 20 total","Use plank mountain climbers or stand and drive alternating knees for lower impact.","Cardio and core"],
+["Jumping jacks / step jacks","3 × 30 sec","Choose jumping or step version based on comfort and impact tolerance.","Cardio"],
+["Plank","3 × 20–30 sec","Hold a strong, comfortable position while breathing normally.","Core"],
+["Glute bridges","3 × 15 reps","Raise hips and squeeze glutes at the top without arching your back.","Glutes"]]}
+];
+let selected=0, completed=JSON.parse(localStorage.getItem("fit68_done")||"{}"), weights=JSON.parse(localStorage.getItem("fit68_weights")||"[]"), metrics=JSON.parse(localStorage.getItem("fit68_metrics")||"{}"), seconds=60, interval=null;
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem("fit68_done",JSON.stringify(completed));localStorage.setItem("fit68_weights",JSON.stringify(weights));localStorage.setItem("fit68_metrics",JSON.stringify(metrics))}
+function showTab(tab){["home","workouts","timer","progress"].forEach(t=>$(t).classList.toggle("hidden",t!==tab));document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));if(tab==="workouts")renderWorkout();if(tab==="home")renderHome();if(tab==="progress")renderProgress()}
+function renderHome(){let current=weights.length?Number(weights[weights.length-1].weight):84;let lost=Math.max(0,84-current),pct=Math.min(100,lost/16*100);$("currentWeight").textContent=current.toFixed(1)+" kg";$("remaining").textContent=Math.max(0,68-current).toFixed(1)+" kg";$("weightBar").style.width=pct+"%";$("percent").textContent=Math.round(pct)+"%";let today=(new Date().getDay()+6)%7;let idx=Math.min(today,5);$("todayLabel").textContent=plans[idx].name;$("todayTitle").textContent=plans[idx].title;$("weekOverview").innerHTML=plans.map((p,i)=>`<div class="card"><div class="muted" style="font-size:11px">${p.name}</div><b style="font-size:13px">${p.title}</b></div>`).join("");$("abCount").textContent=Object.values(completed).flat().length;$("workoutCount").textContent=Object.values(completed).filter(a=>a.length).length+" / 6"}
+function renderWorkout(){ $("dayButtons").innerHTML=plans.map((p,i)=>`<button class="day ${i===selected?"active":""}" onclick="selected=${i};renderWorkout()">${p.name.slice(0,3)}</button>`).join("");let p=plans[selected],done=completed[selected]||[];$("dayName").textContent=p.name;$("workoutTitle").textContent=p.title;$("duration").textContent=p.duration;$("exerciseList").innerHTML=p.items.map((x,i)=>`<div class="exercise"><div class="num">${i+1}</div><div style="flex:1"><div class="row"><h3>${x[0]}</h3><input aria-label="Mark ${x[0]} complete" type="checkbox" ${done.includes(i)?"checked":""} onchange="toggleExercise(${i},this.checked)"></div><div class="dose">${x[1]}</div><p>${x[2]}</p><span class="muted" style="font-size:11px">${x[3]}</span></div></div>`).join("");let pct=Math.round(done.length/p.items.length*100);$("doneText").textContent=done.length+" of "+p.items.length+" exercises completed";$("donePercent").textContent=pct+"%";$("doneBar").style.width=pct+"%"}
+function toggleExercise(i,on){let a=completed[selected]||[];completed[selected]=on?[...new Set([...a,i])]:a.filter(x=>x!==i);save();renderWorkout();renderHome()}
+function finishWorkout(){let p=plans[selected];if((completed[selected]||[]).length<p.items.length){if(!confirm("Some exercises are not checked off. Finish this workout anyway?"))return}alert(p.name+" workout saved. Great work!");renderHome()}
+function setTimer(n){pauseTimer();seconds=n;drawTimer()}function drawTimer(){$("clock").textContent=String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0")}
+function startTimer(){if(interval)return;interval=setInterval(()=>{if(seconds>0){seconds--;drawTimer()}else{pauseTimer();if(navigator.vibrate)navigator.vibrate([250,100,250]);alert("Rest time finished. Ready for your next set?")}},1000)}
+function pauseTimer(){if(interval){clearInterval(interval);interval=null}}function resetTimer(){pauseTimer();seconds=60;drawTimer()}
+function addWeight(){let w=Number($("weightInput").value),d=$("weightDate").value||new Date().toISOString().slice(0,10);if(!w||w<30||w>250){alert("Enter a valid weight in kg.");return}weights.push({weight:w,date:d});weights.sort((a,b)=>a.date.localeCompare(b.date));save();$("weightInput").value="";renderProgress();renderHome()}
+function saveMetrics(){let r=$("runInput").value,wa=$("waistInput").value;if(r!=="")metrics.jog=Number(r);if(wa!=="")metrics.waist=Number(wa);save();renderProgress();alert("Measurements saved.")}
+function renderProgress(){$("weightHistory").innerHTML=weights.length?weights.slice().reverse().map(x=>`<div class="log row"><span>${x.date}</span><strong>${Number(x.weight).toFixed(1)} kg</strong></div>`).join(""):'<div class="empty">No entries yet. Add your first weigh-in.</div>';$("metricsHistory").innerHTML=`<div class="row log"><span>Longest continuous jog</span><strong>${metrics.jog??"—"} min</strong></div><div class="row log"><span>Waist measurement</span><strong>${metrics.waist??"—"} cm</strong></div>`}
+$("weightDate").value=new Date().toISOString().slice(0,10);renderHome();renderWorkout();renderProgress();drawTimer();
+if("serviceWorker" in navigator && location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+</script>
+</body></html>
